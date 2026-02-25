@@ -23,6 +23,15 @@ string to_upper(string s)
     return s;
 }
 
+vector<string> split(const string& s, char delim) {
+    vector<string> tokens;
+    string token;
+    stringstream ss(s);
+    while (getline(ss, token, delim)) {
+        tokens.push_back(trim(token));
+    }
+    return tokens;
+}
 
 
 struct Column
