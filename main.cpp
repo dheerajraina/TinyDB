@@ -33,6 +33,24 @@ struct Table{
 };
 
 
+struct Database{
+    string name;
+    unordered_map<string,Table>tables;
+
+    Database(const string& name):name(name){}
+    
+
+    void create_table(const string& table_name,const vector<Column>& cols){
+        if (tables.count(table_name)){
+            cout<<"Error: Table already exists\n";
+            return;
+        }
+
+        tables.emplace(table_name,Table(table_name,cols));
+        cout<<"Table '"<<table_name<<"' created\n";
+    }
+};
+
 
 
 int main()
