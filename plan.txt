@@ -1,0 +1,27 @@
+Phase0 :- 
+    FEATURES:
+        CREATE DATABASE db_name;
+        USE db_name;
+        CREATE TABLE tabel_name(col1,col2,col3);
+        WHERE 
+    DESIGN:
+        Database manager -> In-memory only 
+        Database -> holds tables
+        Table -> holds columns(some datatype) & rows
+
+
+Phase1 :- 
+    FEATURES:
+        
+        DELETE FROM
+        UPDATE 
+    DESIGN:
+        Database manager -> In-memory only 
+        Database -> holds tables
+        Table -> holds columns(some datatype) & rows
+
+
+Phase3 :- 
+    FEATURES:
+        Disk persistence
+
