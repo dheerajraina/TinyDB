@@ -19,6 +19,22 @@ string to_upper(string s) {
     return s;
 }
 
+struct Column{
+    string name;
+    string type;
+};
+
+struct Table{
+    string name;
+    vector <Column> columns;
+
+    Table(const string& name, const vector<Column>& cols)
+    : name(name),columns(cols){}
+};
+
+
+
+
 int main()
 {
 
