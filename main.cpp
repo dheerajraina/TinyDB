@@ -87,15 +87,13 @@ public:
         cout << "Database '" << name << "' created\n";
     }
 
-    void use_database(const string &name)
-    {
-        if (databases.count(name))
-        {
-            cout << "Error: Database already exists\n";
+    void use_database(const string& name) {
+        if (!databases.count(name)) {
+            cout << "Error: Database not found\n";
             return;
         }
-        databases.emplace(name, Database(name));
-        cout << "Database '" << name << "' created\n";
+        current_db = &databases.at(name);
+        cout << "Using database '" << name << "'\n";
     }
 
     Database *get_current_db()
@@ -117,12 +115,15 @@ public:
         string upper = to_upper(query);
 
         if (upper.find("CREATE DATABASE") == 0) {
+            cout<<"create db command\n";
             handle_create_database(query);
         }
         else if (upper.find("USE") == 0) {
+            cout<<"use command\n";
             handle_use(query);
         }
         else if (upper.find("CREATE TABLE") == 0) {
+            cout<<"create tb command\n";
             handle_create_table(query);
         }
         else {
@@ -202,16 +203,17 @@ private:
 int main()
 {
 
+    SQLEngine engine;
     string input, line;
     cout << "Welcome to TinyDB (type 'exit;')\n";
 
     while (true)
     {
 
-        cout << ">>";
+        // cout << ">>";
         getline(cin, line);
         input += line;
-        cout << "line -> " << trim(input);
+        // cout << "line -> " << trim(input);
 
         if (input.find(';') == string::npos)
             continue;
@@ -219,6 +221,7 @@ int main()
         if (to_upper(trim(input)) == "EXIT;")
             break;
 
+        engine.execute(input);
         input.clear();
     }
 
