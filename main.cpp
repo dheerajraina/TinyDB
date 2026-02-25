@@ -23,6 +23,8 @@ string to_upper(string s)
     return s;
 }
 
+
+
 struct Column
 {
     string name;
@@ -76,13 +78,115 @@ public:
         cout << "Database '" << name << "' created\n";
     }
 
-    void use_database(const string& name){
-         if (databases.count(name)) {
+    void use_database(const string &name)
+    {
+        if (databases.count(name))
+        {
             cout << "Error: Database already exists\n";
             return;
         }
         databases.emplace(name, Database(name));
         cout << "Database '" << name << "' created\n";
+    }
+
+    Database *get_current_db()
+    {
+        return current_db;
+    }
+};
+
+class SQLEngine {
+private:
+    DatabaseManager dbm;
+
+public:
+    void execute(string query) {
+        query = trim(query);
+        if (query.back() == ';')
+            query.pop_back();
+
+        string upper = to_upper(query);
+
+        if (upper.find("CREATE DATABASE") == 0) {
+            handle_create_database(query);
+        }
+        else if (upper.find("USE") == 0) {
+            handle_use(query);
+        }
+        else if (upper.find("CREATE TABLE") == 0) {
+            handle_create_table(query);
+        }
+        else {
+            cout << "Error: Unknown command\n";
+        }
+    }
+
+private:
+    void handle_create_database(const string& q) {
+        auto parts = split(q, ' ');
+        if (parts.size() != 3) {
+            cout << "Syntax error in CREATE DATABASE\n";
+            return;
+        }
+        dbm.create_database(parts[2]);
+    }
+
+    void handle_use(const string& q) {
+        auto parts = split(q, ' ');
+        if (parts.size() != 2) {
+            cout << "Syntax error in USE\n";
+            return;
+        }
+        dbm.use_database(parts[1]);
+    }
+
+    void handle_create_table(const string& q) {
+        Database* db = dbm.get_current_db();
+        if (!db) {
+            cout << "Error: No database selected\n";
+            return;
+        }
+
+        size_t start = q.find('(');
+        size_t end = q.find(')');
+
+        if (start == string::npos || end == string::npos || end <= start) {
+            cout << "Syntax error in CREATE TABLE\n";
+            return;
+        }
+
+        string header = trim(q.substr(0, start));
+        auto header_parts = split(header, ' ');
+        if (header_parts.size() != 3) {
+            cout << "Syntax error in CREATE TABLE\n";
+            return;
+        }
+
+        string table_name = header_parts[2];
+        string cols_str = q.substr(start + 1, end - start - 1);
+
+        vector<string> col_defs = split(cols_str, ',');
+        vector<Column> columns;
+
+        for (const string& def : col_defs) {
+            auto parts = split(def, ' ');
+            if (parts.size() != 2) {
+                cout << "Invalid column definition: " << def << "\n";
+                return;
+            }
+
+            string col_name = parts[0];
+            string col_type = to_upper(parts[1]);
+
+            if (col_type != "INT" && col_type != "TEXT") {
+                cout << "Unsupported type: " << col_type << "\n";
+                return;
+            }
+
+            columns.push_back({col_name, col_type});
+        }
+
+        db->create_table(table_name, columns);
     }
 };
 
