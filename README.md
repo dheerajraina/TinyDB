@@ -15,3 +15,4 @@ Disclaimer: Code is written by someone who is just starting out with C++, so cod
 1) CREATE DATABASE database_name
 2) USE database_name
 3) CREATE TABLE table_name(column_name1 column_type1......column_nameN column_typeN)
+4) INSERT INTO users VALUES (value1,.....valueN);
